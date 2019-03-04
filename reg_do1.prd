@@ -1,0 +1,26 @@
+// *****************************************************************************
+// Название: Регистрация ДО-1
+// Описание: Регистрация ДО-1
+// Кнопка вызова: 1
+// Подпись кнопки: Регистрация ДО-1
+// Язык: FuncScript
+// Вызов по событию: 
+// Без подтверждения: 0
+// *****************************************************************************
+//
+
+VAR ('regTime', String);
+
+VAR ('sInsp' , String, INPUTTEXT ('ФИО Инспектра', 'ФИО Инспектра'));
+VAR ('sRegNum' , String, INPUTTEXT ('Регистрационный номер', 'Регистрационный номер'));
+INPUTDATE('regTime', "Дата и время регистрации");
+
+EXECUTESQL ('STS_DB', 'UPDATE KRD_MAIN SET MC_STATUS_BD = ' +char(39)+ '3' +char(39)+ ', STATUS_EPS = ' +char(39)+ 'ДО-1 зарегистрирована' +char(39)+ ',
+FIO_INSPECTOR = ' +char(39)+ sInsp +char(39)+ ',
+REG_NBD = ' +char(39)+ sRegNum +char(39)+ ',
+GD1 = ' +char(39)+ regTime +char(39)+ '
+  WHERE MAIN_ID=' + KRD_MAIN.MAIN_ID + ' AND PLACEID=' + KRD_MAIN.PLACEID);
+GLOBALREFRESH ();
+SHOWMESSAGE('Обработка документов завершена.');
+
+

@@ -1,0 +1,52 @@
+// *****************************************************************************
+// Название: Регистрация ком. акта
+// Описание: 
+// Кнопка вызова: 1
+// Подпись кнопки: 
+// Язык: FuncScript
+// Вызов по событию: 
+// Без подтверждения: 0
+// *****************************************************************************
+//
+
+VAR ('docNO', String);
+VAR ('regTime', String);
+VAR ('IsSelected', Integer, 0);
+VAR ('REG_NBD', String, KRD_MAIN.REG_NBD);
+VAR ('inspFIO', String);
+
+IsSelected := SELECTVALUES ("Выбор коммерческого акта",
+ 'KRD_DOP',  [
+ ['DOC_NAME', 'Наименование', 15],
+ ['DOC_NO', 'Номер акта', 15],
+ ['DOC_DATETIME', 'Дата акта', 15],
+ ],
+ [['DOC_NO', 'docNO'],
+ ],'', 'STS_DB', '');
+
+IF(IsSelected = 0, RAISEEXCEPTION('Отменено пользователем'));
+
+inspFIO:= INPUTTEXT ('ФИО инспектора', 'Укажите ФИО инспектора');
+INPUTDATE ('regTime', 'Дата и время регистрации', 1);
+
+EXECUTESQL ('STS_DB', 'UPDATE KRD_DOP SET DOC_REG_STATUS=' +char(39)+ '3' +char(39)+
+', DOC_REG_NO=' +char(39)+ REG_NBD +char(39)+
+', DOC_REG_DATETIME=' +char(39)+ regTime +char(39)+
+', DOC_INSPECTOR_FIO=' +char(39)+ inspFIO +char(39)+
+', DOC_INSPECTOR_LNP=' +char(39)+ '000' +char(39)+
+' WHERE DOC_NO=' +char(39)+ docNO +char(39)+
+' AND PLACEID=' + KRD_MAIN.PLACEID +
+' AND ID=' +KRD_MAIN.ID);
+
+
+EXECUTESQL ('STS_DB', 'UPDATE KRD_MAIN SET STATUS_EPS = ' +char(39)+ 'Ком. акт зарегистрирован' +char(39)+ '  WHERE MAIN_ID=' + KRD_MAIN.MAIN_ID + ' AND PLACEID=' + KRD_MAIN.PLACEID);
+GLOBALREFRESH ();
+
+Showmessage("Успешно завершено!");
+
+
+
+
+
+
+
