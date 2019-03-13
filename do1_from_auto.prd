@@ -132,7 +132,7 @@ APPENDRECORD ('KRD_MAIN');
 iID := KRD_MAIN.ID;
 dtDODate := NOW();
 dtBegkeep := DATE() + 1;
-dtStoreDate := AddMonths(dtDODate + 1, 2);
+dtStoreDate := AddMonths(dtDODate + 1, 4);
 vStorePeriod := dtStoreDate - dtBegkeep;
 WriteLog('iPLACEID=' + iPLACEID);
 WriteLog('iID=' + iID);
@@ -367,6 +367,7 @@ AddNotification();
 CLOSEDATASET ('Q_MAX');
 WriteLog( 'Создано ДО1 с номером : ' + KRD_MAIN.NBD);
 WriteLog( '--- Окончание работы скрипта.');
+
 
 
 
