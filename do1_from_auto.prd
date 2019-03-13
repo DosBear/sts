@@ -105,6 +105,7 @@ PlaceIsSelected := SelectValues ('Выбор склада, на который будет создан документ
 WRITEINIFILE ('CREATEDO1FROMAPI', 'IPLACEID',iPLACEID );
 
 VAR ('sSQL', String, '');
+VAR ('vBOXNO', String, 'ОТКРЫТАЯ ПЛОЩАДКА');
 VAR ('vPaperName', String, 'CMR');
 VAR ('vPaperNo', String, '');
 VAR ('vPaperDate', String, '');
@@ -261,6 +262,7 @@ while (iNc < iCountRoot,
                                                                         'G38',  REPLACESTR (XMLNODEVALUE (XMLNODEFIND (iTekGood, 'NetWeightQuantity')), ',', '.'),
                                                                         'G42',  REPLACESTR (XMLNODEVALUE (XMLNODEFIND (iTekGood, 'InvoicedCost')), ',', '.'),
                                                                         'G42_CURRENCY', CURRENCYCODE (XMLNODEVALUE (XMLNODEFIND (iTekGood, 'CurrencyCode')), DATE()),
+                                                                        'VALCODE', XMLNODEVALUE (XMLNODEFIND (iTekGood, 'CurrencyCode')),
                                                                         'G315A',  REPLACESTR (XMLNODEVALUE (XMLNODEFIND (XMLNODEFIND (iTekGood, 'GoodsMeasureQuantity'), 'GoodsQuantity')), ',', '.'),
                                                                         'G315',  XMLNODEVALUE (XMLNODEFIND (XMLNODEFIND (iTekGood, 'GoodsMeasureQuantity'), 'MeasureUnitQualifierName')),
                                                                         'G41A',  XMLNODEVALUE (XMLNODEFIND (XMLNODEFIND (iTekGood, 'GoodsMeasureQuantity'), 'MeasureUnitQualifierCode')),
@@ -272,7 +274,7 @@ while (iNc < iCountRoot,
                                                                         'LEG_PERIOD', '15' ,
                                                                         'STORE_PERIOD', vStorePeriod ,
                                                                         'STORAGE_DATE', dtStoreDate,
-                                                                        'BOXNO', KRD_MAIN.NBD + '/' + LEFTPAD(XMLNODEVALUE (XMLNODEFIND (iTekGood, 'GoodsNumeric')), '6', '0')
+                                                                        'BOXNO', vBOXNO
 
                                             );
                                             POST('KRD_COMM_3');
@@ -365,6 +367,9 @@ AddNotification();
 CLOSEDATASET ('Q_MAX');
 WriteLog( 'Создано ДО1 с номером : ' + KRD_MAIN.NBD);
 WriteLog( '--- Окончание работы скрипта.');
+
+
+
 
 
 
