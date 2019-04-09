@@ -1,0 +1,48 @@
+// *****************************************************************************
+// Название: Регистрация ДО-2
+// Описание: 
+// Кнопка вызова: 1
+// Подпись кнопки: Регистрация ДО-2
+// Язык: FuncScript
+// Вызов по событию: 
+// Без подтверждения: 0
+// *****************************************************************************
+//
+
+VAR ('relNo', String);
+VAR ('regTime', String);
+VAR ('IsSelected', Integer, 0);
+VAR ('vPlaceID', Integer, 0);
+
+VAR ('REG_NBD', String, KRD_MAIN.REG_NBD);
+VAR ('inspFIO', String);
+VAR ('regNum', String);
+
+
+
+vPlaceID    := KRD_MAIN.PLACEID;
+OPENQUERY ('qDO2List', 'STS_DB', 'SELECT  RELEASE_NO, RELEASE_DATE  FROM RELEASE WHERE PLACEID=' + vPlaceID + ' AND ID=' + KRD_MAIN.MAIN_ID + ' AND MAIN_NO = 1');
+IsSelected := SELECTVALUES ('Выберите Форму ДО-2', 'qDO2List', [['RELEASE_NO', 'Отчёт №', 30], ['RELEASE_DATE', 'Дата отчёта', 30]], [['RELEASE_NO', 'relNo']], '', 'STS_DB');
+IF(IsSelected = 0, RAISEEXCEPTION ('Отменено пользователем'));
+
+inspFIO:= INPUTTEXT ('ФИО инспектора', 'Укажите ФИО инспектора');
+INPUTDATE ('regTime', 'Дата и время регистрации', 1);
+regNum :=  INPUTTEXT ('Регистрационный номер', 'Укажите регистрационный номер для ДО-2');
+
+EXECUTESQL ('STS_DB', 'UPDATE RELEASE SET MC_STATUS=' +char(39)+ '3' +char(39)+
+', REG_RELEASE_NO =' +char(39)+ regNum +char(39)+
+', REG_TIME=' +char(39)+ regTime +char(39)+
+', FIO_INSPECTOR=' +char(39)+ inspFIO +char(39)+
+',GD2=' +char(39)+ '000' +char(39)+
+',POST_INSPECTOR=' +char(39)+ 'ГГТИ' +char(39)+
+' WHERE RELEASE_NO=' +char(39)+ relNo +char(39)+
+' AND PLACEID=' + KRD_MAIN.PLACEID +
+' AND ID=' +KRD_MAIN.ID);
+
+
+EXECUTESQL ('STS_DB', 'UPDATE KRD_MAIN SET STATUS_EPS = ' +char(39)+ 'ДО-2 зарегистрирована' +char(39)+ '  WHERE MAIN_ID=' + KRD_MAIN.MAIN_ID + ' AND PLACEID=' + KRD_MAIN.PLACEID);
+GLOBALREFRESH ();
+
+Showmessage("Успешно завершено!");
+
+
