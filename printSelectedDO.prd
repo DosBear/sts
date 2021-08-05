@@ -1,0 +1,32 @@
+// *****************************************************************************
+// Название: Печать актов выдачи для ДО
+// Описание: Печать актов выдачи для ДО
+// Кнопка вызова: 1
+// Подпись кнопки: Печать актов выдачи для ДО
+// Язык: FuncScript
+// Вызов по событию: 
+// Без подтверждения: 0
+// *****************************************************************************
+//
+
+
+GETSELECTEDDOCS ('SELECTED_DO1', 'PLACEID', 'ID', 'DOCUMENTID');
+SHOWPROGRESS ('Печать ДО1');
+VAR ('iCountDO1', integer, RECORDCOUNT('SELECTED_DO1'));
+VAR ('iCounterProgress', integer, 0);
+FIRST ('SELECTED_DO1');
+WHILE(EOF('SELECTED_DO1')=0,
+      BLOCK(  
+            LOCATE ('KRD_MAIN', 'PLACEID;ID', [SELECTED_DO1.PLACEID, SELECTED_DO1.ID]); 
+			WHILE(EOF('OUT_MAIN')=0, BLOCK(
+				PRINTDOCUMENT ( "C:\out.fr3", 2, 1);
+				NEXT ('OUT_MAIN');
+			));
+            NEXT ('SELECTED_DO1');
+            iCounterProgress := iCounterProgress + 1;
+            SETPROGRESS(iCounterProgress, 100, iCountDO1);
+      )
+);
+GLOBALREFRESH();
+HIDEPROGRESS();
+SHOWMESSAGE ( 'Печать завершена.', 1, 'ВЭД-Склад');
